@@ -148,11 +148,17 @@ export default function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       // Force a re-render to update the "hours ago" display
-      setTimestamp(prev => prev);
+      // We'll use a dummy state update to trigger re-render
+      if (timestamp) {
+        console.log("Updating time display, current timestamp:", timestamp);
+        console.log("Time ago result:", getHoursAgo(timestamp));
+        // Force re-render by updating a dummy state
+        setLoading(prev => prev);
+      }
     }, 60000); // Update every minute
 
     return () => clearInterval(interval);
-  }, []);
+  }, [timestamp]); // Add timestamp as dependency
 
   // Share current location
   const shareLocation = async () => {
@@ -261,12 +267,15 @@ export default function App() {
                   <Popup>
                     🐶 Mochi was spotted here!<br />
                     <strong>{timestamp}</strong>
-                    {getHoursAgo(timestamp) && (
-                      <>
-                        <br />
-                        <em>🕒 {getHoursAgo(timestamp)}</em>
-                      </>
-                    )}
+                    {(() => {
+                      const timeAgo = getHoursAgo(timestamp);
+                      return timeAgo ? (
+                        <>
+                          <br />
+                          <em>🕒 {timeAgo}</em>
+                        </>
+                      ) : null;
+                    })()}
                   </Popup>
                 </Marker>
               </MapContainer>
@@ -274,11 +283,17 @@ export default function App() {
             <div className="mt-4 text-center bg-white rounded-lg p-4 shadow-md">
               <p className="text-gray-700 text-lg md:text-xl font-medium mb-1">Last seen:</p>
               <p className="text-gray-900 text-xl md:text-2xl font-bold mb-2">{timestamp}</p>
-              {getHoursAgo(timestamp) && (
-                <p className="text-green-600 text-lg md:text-xl font-semibold">
-                  🕒 {getHoursAgo(timestamp)}
-                </p>
-              )}
+              {(() => {
+                const timeAgo = getHoursAgo(timestamp);
+                console.log("Rendering time ago:", timeAgo, "for timestamp:", timestamp);
+                return timeAgo ? (
+                  <p className="text-green-600 text-lg md:text-xl font-semibold">
+                    🕒 {timeAgo}
+                  </p>
+                ) : (
+                  <p className="text-gray-500 text-sm">Time calculation unavailable</p>
+                );
+              })()}
             </div>
           </div>
         ) : (
