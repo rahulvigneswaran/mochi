@@ -42,24 +42,6 @@ export default function App() {
     fetchLocation();
   }, []);
 
-  // Test API connectivity
-  const testAPI = async () => {
-    try {
-      console.log("Testing API connectivity...");
-      const response = await fetch(API_URL, {
-        method: "GET",
-        mode: "cors"
-      });
-      console.log("API test response:", response);
-      const data = await response.json();
-      console.log("API test data:", data);
-      alert(`API test successful! Response: ${JSON.stringify(data)}`);
-    } catch (e) {
-      console.error("API test failed:", e);
-      alert(`API test failed: ${e.message}`);
-    }
-  };
-
   // Share current location
   const shareLocation = async () => {
     if (!navigator.geolocation) {
@@ -112,20 +94,12 @@ export default function App() {
   return (
     <div className="flex flex-col items-center p-4 gap-4">
       <h1 className="text-2xl font-bold">Mochi Tracker 🐶</h1>
-      <div className="flex gap-2">
-        <button
-          onClick={shareLocation}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow"
-        >
-          Share Mochi's Location
-        </button>
-        <button
-          onClick={testAPI}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow"
-        >
-          Test API
-        </button>
-      </div>
+      <button
+        onClick={shareLocation}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow"
+      >
+        Share Mochi's Location
+      </button>
 
       {loading ? (
         <p>Loading last seen location...</p>
