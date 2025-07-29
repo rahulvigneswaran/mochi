@@ -15,7 +15,7 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const API_URL = "https://script.google.com/macros/s/AKfycby-8Gq9Lq24Zl1Avhm5wGuCm3h9p7YbICqmA4S6evGsIxjm1wgPQlop6Vlc4pMVpfAl/exec"; // Google Script URL
+const API_URL = "https://script.google.com/macros/s/AKfycbzJEZbrUyFF3cwM_z41BqG26OWFH6jwEhTBLwHTW83_J7oe1Jk1mXu47s4wfDYL4QEm/exec"; // Google Script URL
 
 export default function App() {
   const [location, setLocation] = useState(null);
