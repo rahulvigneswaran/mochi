@@ -303,9 +303,10 @@ export default function App() {
                   <Popup>
                     <div className="text-center">
                       <img 
-                        src="/mochi.jpg" 
+                        src="/mochi/mochi.jpg" 
                         alt="Mochi" 
-                        className="w-12 h-12 rounded-full object-cover mx-auto mb-2 border-2 border-green-300"
+                        className="w-16 h-12 rounded-lg object-cover mx-auto mb-2 border-2 border-green-300"
+                        onError={(e) => e.target.style.display = 'none'}
                       />
                       <div>
                         <strong>Mochi was spotted here!</strong><br />
@@ -355,9 +356,14 @@ export default function App() {
         <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-green-50 to-blue-50">
           <div className="text-center">
             <img 
-              src="/mochi.jpg" 
+              src="/mochi/mochi.jpg" 
               alt="Mochi the dog" 
-              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-green-300 shadow-lg mx-auto mb-2"
+              className="w-24 h-20 md:w-32 md:h-24 rounded-xl object-cover border-4 border-green-300 shadow-lg mx-auto mb-2"
+              onError={(e) => {
+                console.error("Image failed to load:", e.target.src);
+                e.target.style.display = 'none';
+              }}
+              onLoad={() => console.log("Image loaded successfully")}
             />
             <p className="text-gray-700 font-medium text-sm md:text-base">This is Mochi! 🐕</p>
             <p className="text-gray-500 text-xs md:text-sm">Help us keep track of our furry friend</p>
