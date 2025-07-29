@@ -353,20 +353,20 @@ export default function App() {
       {/* Fixed bottom section with Mochi's photo, notification and button */}
       <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
         {/* Mochi's Photo Section */}
-        <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-green-50 to-blue-50">
+        <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-blue-50">
           <div className="text-center">
             <img 
               src="/mochi/mochi.jpg" 
               alt="Mochi the dog" 
-              className="w-24 h-20 md:w-32 md:h-24 rounded-xl object-cover border-4 border-green-300 shadow-lg mx-auto mb-2"
+              className="w-32 h-24 md:w-40 md:h-32 rounded-xl object-cover border-4 border-green-300 shadow-lg mx-auto mb-3"
               onError={(e) => {
                 console.error("Image failed to load:", e.target.src);
                 e.target.style.display = 'none';
               }}
               onLoad={() => console.log("Image loaded successfully")}
             />
-            <p className="text-gray-700 font-medium text-sm md:text-base">This is Mochi! 🐕</p>
-            <p className="text-gray-500 text-xs md:text-sm">Help us keep track of our furry friend</p>
+            <p className="text-gray-700 font-bold text-base md:text-lg">This is Mochi! 🐕</p>
+            <p className="text-gray-600 text-sm md:text-base mt-1">Help us keep track of our furry friend</p>
           </div>
         </div>
         
