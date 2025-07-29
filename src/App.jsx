@@ -57,6 +57,33 @@ export default function App() {
     return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   };
 
+  // Calculate how many hours ago Mochi was seen
+  const getHoursAgo = (timestamp) => {
+    if (!timestamp) return null;
+    
+    try {
+      const lastSeen = new Date(timestamp);
+      const now = new Date();
+      const diffInMs = now - lastSeen;
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      
+      if (diffInHours < 1) {
+        if (diffInMinutes < 1) {
+          return "just now";
+        }
+        return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+      } else if (diffInHours < 24) {
+        return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+      } else {
+        const diffInDays = Math.floor(diffInHours / 24);
+        return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+      }
+    } catch (error) {
+      return null;
+    }
+  };
+
   // Fetch latest Mochi location
   const fetchLocation = async () => {
     try {
@@ -75,6 +102,16 @@ export default function App() {
 
   useEffect(() => {
     fetchLocation();
+  }, []);
+
+  // Update the "hours ago" display every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Force a re-render to update the "hours ago" display
+      setTimestamp(prev => prev);
+    }, 60000); // Update every minute
+
+    return () => clearInterval(interval);
   }, []);
 
   // Share current location
@@ -180,13 +217,24 @@ export default function App() {
                   <Popup>
                     🐶 Mochi was spotted here!<br />
                     <strong>{timestamp}</strong>
+                    {getHoursAgo(timestamp) && (
+                      <>
+                        <br />
+                        <em>🕒 {getHoursAgo(timestamp)}</em>
+                      </>
+                    )}
                   </Popup>
                 </Marker>
               </MapContainer>
             </div>
             <div className="mt-4 text-center bg-white rounded-lg p-4 shadow-md">
               <p className="text-gray-700 text-lg md:text-xl font-medium mb-1">Last seen:</p>
-              <p className="text-gray-900 text-xl md:text-2xl font-bold">{timestamp}</p>
+              <p className="text-gray-900 text-xl md:text-2xl font-bold mb-2">{timestamp}</p>
+              {getHoursAgo(timestamp) && (
+                <p className="text-green-600 text-lg md:text-xl font-semibold">
+                  🕒 {getHoursAgo(timestamp)}
+                </p>
+              )}
             </div>
           </div>
         ) : (
