@@ -209,30 +209,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Custom Notification */}
-      {notification && (
-        <div className={`fixed top-4 left-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
-          notification.type === 'success' ? 'bg-green-100 border border-green-400 text-green-800' :
-          notification.type === 'error' ? 'bg-red-100 border border-red-400 text-red-800' :
-          'bg-blue-100 border border-blue-400 text-blue-800'
-        }`}>
-          <div className="flex items-center gap-3">
-            <div className="text-xl">
-              {notification.type === 'success' ? '✅' : 
-               notification.type === 'error' ? '❌' : 
-               '📍'}
-            </div>
-            <p className="font-medium flex-1">{notification.message}</p>
-            <button 
-              onClick={() => setNotification(null)}
-              className="text-xl hover:opacity-70 transition-opacity"
-            >
-              ×
-            </button>
-          </div>
-        </div>
-      )}
-      
       <div className="flex-1 flex flex-col items-center p-4 gap-6">
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
@@ -313,14 +289,41 @@ export default function App() {
         )}
       </div>
       
-      {/* Fixed bottom button for mobile accessibility */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 shadow-lg">
-        <button
-          onClick={shareLocation}
-          className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-8 py-4 rounded-2xl shadow-lg text-xl font-bold transition-colors duration-200 w-full max-w-md mx-auto block"
-        >
-          🐕 I see Mochi!
-        </button>
+      {/* Fixed bottom section with notification and button */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
+        {/* Custom Notification - positioned above button */}
+        {notification && (
+          <div className={`p-4 border-b transition-all duration-300 ${
+            notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+            notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+            'bg-blue-50 border-blue-200 text-blue-800'
+          }`}>
+            <div className="flex items-center gap-3 max-w-md mx-auto">
+              <div className="text-xl">
+                {notification.type === 'success' ? '✅' : 
+                 notification.type === 'error' ? '❌' : 
+                 '📍'}
+              </div>
+              <p className="font-medium flex-1 text-sm">{notification.message}</p>
+              <button 
+                onClick={() => setNotification(null)}
+                className="text-xl hover:opacity-70 transition-opacity"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Button */}
+        <div className="p-4">
+          <button
+            onClick={shareLocation}
+            className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-8 py-4 rounded-2xl shadow-lg text-xl font-bold transition-colors duration-200 w-full max-w-md mx-auto block"
+          >
+            🐕 I see Mochi!
+          </button>
+        </div>
       </div>
     </div>
   );
