@@ -185,12 +185,11 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
       const now = new Date().toLocaleString();
-      setLocation([latitude, longitude]);
-      setTimestamp(now);
+      
       try {
         console.log("Sending location data:", { lat: latitude, lng: longitude, time: now });
         
-        // Use GET request with query parameters instead of POST
+        // Use GET request with query parameters
         const url = new URL(API_URL);
         url.searchParams.append('action', 'update');
         url.searchParams.append('lat', latitude.toString());
@@ -205,6 +204,7 @@ export default function App() {
         });
         
         console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
         
         if (!response.ok) {
           const errorText = await response.text();
@@ -214,7 +214,31 @@ export default function App() {
         
         const result = await response.text();
         console.log("Response body:", result);
-        showNotification("🎉 Thanks! Mochi's location has been updated successfully!", 'success');
+        
+        // Check if the response indicates success
+        let responseData;
+        try {
+          responseData = JSON.parse(result);
+          console.log("Parsed response:", responseData);
+        } catch (e) {
+          console.log("Response is not JSON, treating as text:", result);
+          responseData = { text: result };
+        }
+        
+        // Only update local state if server confirms success
+        if (responseData.success || result.includes('success') || result === 'OK') {
+          setLocation([latitude, longitude]);
+          setTimestamp(now);
+          showNotification("🎉 Thanks! Mochi's location has been updated successfully!", 'success');
+          
+          // Refresh the location from server to confirm it was saved
+          setTimeout(() => {
+            fetchLocation();
+          }, 1000);
+        } else {
+          throw new Error(`Server did not confirm update: ${result}`);
+        }
+        
       } catch (e) {
         console.error("Full error details:", e);
         showNotification(`Failed to update location: ${e.message}`, 'error');
