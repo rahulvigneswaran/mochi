@@ -15,12 +15,47 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const API_URL = "https://script.google.com/macros/s/AKfycbxLjd4mQI22b60NUdmbDsPuE7o8dXt-dzXj2V4EwEYiOl5DzfpQHqQP1iyZVtEo20pS/exec"; // Google Script URL
+const API_URL = "https://script.google.com/macros/s/AKfycby-8Gq9Lq24Zl1Avhm5wGuCm3h9p7YbICqmA4S6evGsIxjm1wgPQlop6Vlc4pMVpfAl/exec"; // Google Script URL
 
 export default function App() {
   const [location, setLocation] = useState(null);
   const [timestamp, setTimestamp] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  // PWA Install functionality
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handler);
+
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    }
+  };
+
+  const isIOS = () => {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  };
+
+  const isInStandaloneMode = () => {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  };
 
   // Fetch latest Mochi location
   const fetchLocation = async () => {
@@ -97,6 +132,29 @@ export default function App() {
         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
         <p className="text-gray-600 text-sm md:text-base">Keep track of our furry friend</p>
       </div>
+      
+      {/* Install buttons - only show if not already installed */}
+      {!isInStandaloneMode() && (
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+          {/* Android/Chrome install button */}
+          {showInstallPrompt && (
+            <button
+              onClick={handleInstallClick}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow-md text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              🐶 Install App
+            </button>
+          )}
+          
+          {/* iOS install instructions */}
+          {isIOS() && (
+            <div className="bg-blue-100 border border-blue-300 rounded-lg p-3 text-center">
+              <p className="text-blue-800 text-xs font-medium mb-1">📱 Install on iOS:</p>
+              <p className="text-blue-700 text-xs">Tap Share → Add to Home Screen</p>
+            </div>
+          )}
+        </div>
+      )}
       
       <button
         onClick={shareLocation}
