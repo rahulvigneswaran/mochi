@@ -63,11 +63,41 @@ export default function App() {
     if (!timestamp) return null;
     
     try {
-      const lastSeen = new Date(timestamp);
+      // Handle different timestamp formats
+      let lastSeen;
+      
+      // If it's already a Date object
+      if (timestamp instanceof Date) {
+        lastSeen = timestamp;
+      } else {
+        // Try to parse the timestamp string
+        // Handle formats like "7/29/2025, 1:30:00 PM" or ISO strings
+        lastSeen = new Date(timestamp);
+        
+        // If parsing failed, try alternative parsing
+        if (isNaN(lastSeen.getTime())) {
+          // Try parsing with different format assumptions
+          const cleanTimestamp = timestamp.replace(/,/g, '').trim();
+          lastSeen = new Date(cleanTimestamp);
+        }
+      }
+      
+      // Check if we have a valid date
+      if (isNaN(lastSeen.getTime())) {
+        console.error("Invalid timestamp format:", timestamp);
+        return null;
+      }
+      
       const now = new Date();
       const diffInMs = now - lastSeen;
-      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      
+      // Handle negative differences (future dates)
+      if (diffInMs < 0) {
+        return "just now";
+      }
+      
       const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
       
       if (diffInHours < 1) {
         if (diffInMinutes < 1) {
@@ -81,6 +111,7 @@ export default function App() {
         return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
       }
     } catch (error) {
+      console.error("Error calculating time ago:", error, "Timestamp:", timestamp);
       return null;
     }
   };
@@ -96,8 +127,10 @@ export default function App() {
     try {
       const res = await fetch(API_URL);
       const data = await res.json();
+      console.log("API response data:", data); // Debug log
       if (data?.lat && data?.lng) {
         setLocation([parseFloat(data.lat), parseFloat(data.lng)]);
+        console.log("Timestamp from API:", data.time, "Type:", typeof data.time); // Debug log
         setTimestamp(data.time);
       }
     } catch (e) {
