@@ -23,6 +23,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   // PWA Install functionality
   useEffect(() => {
@@ -84,6 +85,12 @@ export default function App() {
     }
   };
 
+  // Show custom notification
+  const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 4000); // Hide after 4 seconds
+  };
+
   // Fetch latest Mochi location
   const fetchLocation = async () => {
     try {
@@ -117,9 +124,13 @@ export default function App() {
   // Share current location
   const shareLocation = async () => {
     if (!navigator.geolocation) {
-      alert("Geolocation not supported");
+      showNotification("Geolocation not supported on this device", 'error');
       return;
     }
+    
+    // Show loading state
+    showNotification("Getting your location...", 'loading');
+    
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
       const now = new Date().toLocaleString();
@@ -152,19 +163,43 @@ export default function App() {
         
         const result = await response.text();
         console.log("Response body:", result);
-        alert("Mochi's location updated!");
+        showNotification("🎉 Thanks! Mochi's location has been updated successfully!", 'success');
       } catch (e) {
         console.error("Full error details:", e);
-        alert(`Failed to update location: ${e.message}`);
+        showNotification(`Failed to update location: ${e.message}`, 'error');
       }
     }, (error) => {
       console.error("Geolocation error:", error);
-      alert(`Geolocation error: ${error.message}`);
+      showNotification(`Location access denied. Please enable location services.`, 'error');
     });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Custom Notification */}
+      {notification && (
+        <div className={`fixed top-4 left-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+          notification.type === 'success' ? 'bg-green-100 border border-green-400 text-green-800' :
+          notification.type === 'error' ? 'bg-red-100 border border-red-400 text-red-800' :
+          'bg-blue-100 border border-blue-400 text-blue-800'
+        }`}>
+          <div className="flex items-center gap-3">
+            <div className="text-xl">
+              {notification.type === 'success' ? '✅' : 
+               notification.type === 'error' ? '❌' : 
+               '📍'}
+            </div>
+            <p className="font-medium flex-1">{notification.message}</p>
+            <button 
+              onClick={() => setNotification(null)}
+              className="text-xl hover:opacity-70 transition-opacity"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="flex-1 flex flex-col items-center p-4 gap-6">
         <div className="text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
