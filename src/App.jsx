@@ -92,20 +92,28 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 gap-4">
-      <h1 className="text-2xl font-bold">Mochi Tracker 🐶</h1>
+    <div className="flex flex-col items-center p-4 gap-6 min-h-screen bg-gray-50">
+      <div className="text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
+        <p className="text-gray-600 text-sm md:text-base">Keep track of our furry friend</p>
+      </div>
+      
       <button
         onClick={shareLocation}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow"
+        className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl shadow-lg text-lg font-semibold transition-colors duration-200 w-full max-w-xs"
       >
-        Share Mochi's Location
+        🐕 I see Mochi!
       </button>
 
       {loading ? (
-        <p>Loading last seen location...</p>
+        <div className="text-center">
+          <div className="animate-pulse text-gray-600">
+            <p className="text-lg">Looking for Mochi...</p>
+          </div>
+        </div>
       ) : location ? (
-        <>
-          <div className="w-full h-[400px] md:w-[600px]">
+        <div className="w-full max-w-4xl">
+          <div className="w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden shadow-lg">
             <MapContainer
               center={location}
               zoom={17}
@@ -118,16 +126,22 @@ export default function App() {
               />
               <Marker position={location}>
                 <Popup>
-                  Mochi was last seen here<br />
+                  🐶 Mochi was spotted here!<br />
                   <strong>{timestamp}</strong>
                 </Popup>
               </Marker>
             </MapContainer>
           </div>
-          <p className="text-gray-600 text-sm">Last updated: {timestamp}</p>
-        </>
+          <div className="mt-4 text-center bg-white rounded-lg p-4 shadow-md">
+            <p className="text-gray-700 text-lg md:text-xl font-medium mb-1">Last seen:</p>
+            <p className="text-gray-900 text-xl md:text-2xl font-bold">{timestamp}</p>
+          </div>
+        </div>
       ) : (
-        <p>No sightings reported yet.</p>
+        <div className="text-center bg-white rounded-lg p-6 shadow-md">
+          <p className="text-gray-600 text-lg">No Mochi sightings reported yet 🔍</p>
+          <p className="text-gray-500 text-sm mt-2">Be the first to spot our furry friend!</p>
+        </div>
       )}
     </div>
   );
