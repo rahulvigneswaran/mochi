@@ -253,14 +253,7 @@ export default function App() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex flex-col items-center p-4 gap-6">
         <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <img 
-              src="/mochi.jpg" 
-              alt="Mochi the dog" 
-              className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-4 border-green-200 shadow-lg"
-            />
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Mochi Tracker</h1>
-          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
           <p className="text-gray-600 text-sm md:text-base">Keep track of our furry friend</p>
         </div>
         
@@ -356,8 +349,21 @@ export default function App() {
         )}
       </div>
       
-      {/* Fixed bottom section with notification and button */}
+      {/* Fixed bottom section with Mochi's photo, notification and button */}
       <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-lg">
+        {/* Mochi's Photo Section */}
+        <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-green-50 to-blue-50">
+          <div className="text-center">
+            <img 
+              src="/mochi.jpg" 
+              alt="Mochi the dog" 
+              className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-4 border-green-300 shadow-lg mx-auto mb-2"
+            />
+            <p className="text-gray-700 font-medium text-sm md:text-base">This is Mochi! 🐕</p>
+            <p className="text-gray-500 text-xs md:text-sm">Help us keep track of our furry friend</p>
+          </div>
+        </div>
+        
         {/* Custom Notification - positioned above button */}
         {notification && (
           <div className={`p-4 border-b transition-all duration-300 ${
