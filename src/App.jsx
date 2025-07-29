@@ -63,22 +63,34 @@ export default function App() {
     if (!timestamp) return null;
     
     try {
-      // Handle different timestamp formats
       let lastSeen;
       
       // If it's already a Date object
       if (timestamp instanceof Date) {
         lastSeen = timestamp;
       } else {
-        // Try to parse the timestamp string
-        // Handle formats like "7/29/2025, 1:30:00 PM" or ISO strings
-        lastSeen = new Date(timestamp);
+        // Handle DD/MM/YYYY, HH:MM:SS format from Google Apps Script
+        const timestampStr = timestamp.toString().trim();
         
-        // If parsing failed, try alternative parsing
-        if (isNaN(lastSeen.getTime())) {
-          // Try parsing with different format assumptions
-          const cleanTimestamp = timestamp.replace(/,/g, '').trim();
-          lastSeen = new Date(cleanTimestamp);
+        // Check if it's in DD/MM/YYYY format (like "29/07/2025, 18:27:27")
+        const ddmmyyyyPattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s*(\d{1,2}):(\d{2}):(\d{2})$/;
+        const match = timestampStr.match(ddmmyyyyPattern);
+        
+        if (match) {
+          // Convert DD/MM/YYYY to MM/DD/YYYY for JavaScript Date
+          const [, day, month, year, hour, minute, second] = match;
+          const reformattedTimestamp = `${month}/${day}/${year}, ${hour}:${minute}:${second}`;
+          console.log("Converting timestamp from:", timestampStr, "to:", reformattedTimestamp);
+          lastSeen = new Date(reformattedTimestamp);
+        } else {
+          // Try parsing as-is for other formats
+          lastSeen = new Date(timestampStr);
+          
+          // If parsing failed, try removing commas
+          if (isNaN(lastSeen.getTime())) {
+            const cleanTimestamp = timestampStr.replace(/,/g, '').trim();
+            lastSeen = new Date(cleanTimestamp);
+          }
         }
       }
       
