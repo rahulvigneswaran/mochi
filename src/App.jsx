@@ -253,7 +253,14 @@ export default function App() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex-1 flex flex-col items-center p-4 gap-6">
         <div className="text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Mochi Tracker 🐶</h1>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <img 
+              src="/mochi.jpg" 
+              alt="Mochi the dog" 
+              className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover border-4 border-green-200 shadow-lg"
+            />
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Mochi Tracker</h1>
+          </div>
           <p className="text-gray-600 text-sm md:text-base">Keep track of our furry friend</p>
         </div>
         
@@ -301,17 +308,26 @@ export default function App() {
                 />
                 <Marker position={location}>
                   <Popup>
-                    🐶 Mochi was spotted here!<br />
-                    <strong>{timestamp}</strong>
-                    {(() => {
-                      const timeAgo = getHoursAgo(timestamp);
-                      return timeAgo ? (
-                        <>
-                          <br />
-                          <em>🕒 {timeAgo}</em>
-                        </>
-                      ) : null;
-                    })()}
+                    <div className="text-center">
+                      <img 
+                        src="/mochi.jpg" 
+                        alt="Mochi" 
+                        className="w-12 h-12 rounded-full object-cover mx-auto mb-2 border-2 border-green-300"
+                      />
+                      <div>
+                        <strong>Mochi was spotted here!</strong><br />
+                        <em>{timestamp}</em>
+                        {(() => {
+                          const timeAgo = getHoursAgo(timestamp);
+                          return timeAgo ? (
+                            <>
+                              <br />
+                              <small>🕒 {timeAgo}</small>
+                            </>
+                          ) : null;
+                        })()}
+                      </div>
+                    </div>
                   </Popup>
                 </Marker>
               </MapContainer>
